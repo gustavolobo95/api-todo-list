@@ -7,6 +7,7 @@ import com.todo.todoapp.repository.TaskRepository;
 import com.todo.todoapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,23 +21,28 @@ public class UserController {
     TaskRepository taskRepository;
 
     @PostMapping("/save/user")
-    public User saveUser(@RequestBody UserRequest request) {
-        userRepository.save(request.getUser());
-        return request.getUser();
+    public ResponseEntity<User> saveUser(@RequestBody UserRequest request) {
+        if(request.getUser() != null) {
+            userRepository.save(request.getUser());
+        }
+        return request.getUser() != null ? new ResponseEntity<>(request.getUser(), HttpStatus.CREATED) :
+                new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/users")
-    public List<User> getUsers() {
+    public ResponseEntity<List<User>> getUsers() {
         if (!userRepository.getAllUsers().isEmpty()) {
-            return userRepository.getAllUsers();
+            return new ResponseEntity<>(userRepository.getAllUsers(), HttpStatus.OK);
         } else {
-            return null;
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/user/get")
-    public User getUserById(@RequestParam Long id) {
-        return userRepository.findById(id).isPresent() ? userRepository.findById(id).get() : null;
+    public ResponseEntity<User> getUserById(@RequestParam Long id) {
+        return userRepository.findById(id).isPresent() ?
+                new ResponseEntity<>(userRepository.findById(id).get(), HttpStatus.OK) :
+                new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/user/delete")
@@ -51,11 +57,11 @@ public class UserController {
     }
 
     @GetMapping("/tasks")
-    public List<Task> getTasks() {
+    public ResponseEntity<List<Task>> getTasks() {
         if(!taskRepository.getAllTasks().isEmpty()) {
-            return taskRepository.getAllTasks();
+            return new ResponseEntity<>(taskRepository.getAllTasks(), HttpStatus.OK);
         } else {
-            return null;
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 
