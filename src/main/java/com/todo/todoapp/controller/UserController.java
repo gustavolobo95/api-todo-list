@@ -20,7 +20,7 @@ public class UserController {
     @Autowired
     TaskRepository taskRepository;
 
-    @PostMapping("/save/user")
+    @PostMapping("/users")
     public ResponseEntity<User> saveUser(@RequestBody UserRequest request) {
         if(request.getUser() != null) {
             userRepository.save(request.getUser());
@@ -38,15 +38,15 @@ public class UserController {
         }
     }
 
-    @GetMapping("/user/get")
-    public ResponseEntity<User> getUserById(@RequestParam Long id) {
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userRepository.findById(id).isPresent() ?
                 new ResponseEntity<>(userRepository.findById(id).get(), HttpStatus.OK) :
                 new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/user/delete")
-    public HttpStatus deleteUserById(@RequestParam Long id) {
+    @DeleteMapping("/users/{id}")
+    public HttpStatus deleteUserById(@PathVariable Long id) {
             boolean isPresent = userRepository.existsById(id);
             if(isPresent) {
                 userRepository.deleteById(id);
