@@ -56,10 +56,10 @@ public class UserController {
             return HttpStatus.OK;
     }
 
-    @GetMapping("/tasks")
-    public ResponseEntity<List<Task>> getTasks() {
-        if(!taskRepository.getAllTasks().isEmpty()) {
-            return new ResponseEntity<>(taskRepository.getAllTasks(), HttpStatus.OK);
+    @GetMapping("/tasks/{id}")
+    public ResponseEntity<List<Task>> getTasksById(@PathVariable Long id) {
+        if(!taskRepository.getTaskById(id).isEmpty()) {
+            return new ResponseEntity<>(taskRepository.getTaskById(id), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
