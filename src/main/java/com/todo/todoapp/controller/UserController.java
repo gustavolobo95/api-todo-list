@@ -17,8 +17,6 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    TaskRepository taskRepository;
 
     @PostMapping("/users")
     public ResponseEntity<User> saveUser(@RequestBody UserRequest request) {
@@ -54,15 +52,6 @@ public class UserController {
                 return HttpStatus.NOT_FOUND;
             }
             return HttpStatus.OK;
-    }
-
-    @GetMapping("/tasks/{id}")
-    public ResponseEntity<List<Task>> getTasksById(@PathVariable Long id) {
-        if(!taskRepository.getTaskById(id).isEmpty()) {
-            return new ResponseEntity<>(taskRepository.getTaskById(id), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
     }
 
 }
