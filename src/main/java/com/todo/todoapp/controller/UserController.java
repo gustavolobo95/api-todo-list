@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,14 +22,11 @@ public class UserController {
     UserRepository userRepository;
 
     @PostMapping("/users")
-    public ResponseEntity<User> saveUser(@RequestBody UserRequest request) {
-        boolean isValid = request.getUser() != null
-                && request.getUser().getName() != null
-                && request.getUser().getEmail() != null;
+    public ResponseEntity<User> saveUser(@Valid @RequestBody UserRequest request) {
+        boolean isValid = request.getUser() != null;
         boolean taskListNull = request.getUser().getTaskList() == null;
         if(taskListNull) {
-            List<Task> taskList = new ArrayList<>();
-            request.getUser().setTaskList(taskList);
+            request.getUser().setTaskList(new ArrayList<Task>());
         }
         if(isValid) {
             userRepository.save(request.getUser());
