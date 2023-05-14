@@ -5,6 +5,7 @@ import com.todo.todoapp.model.Task;
 import com.todo.todoapp.model.User;
 import com.todo.todoapp.repository.TaskRepository;
 import com.todo.todoapp.repository.UserRepository;
+import com.todo.todoapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,46 +20,26 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    UserRepository userRepository;
+    UserService service;
 
     @PostMapping("/users")
     public ResponseEntity<User> saveUser(@Valid @RequestBody UserRequest request) {
-        boolean isValid = request.getUser() != null;
-        boolean taskListNull = request.getUser().getTaskList() == null;
-        if(taskListNull) {
-            request.getUser().setTaskList(new ArrayList<Task>());
-        }
-        if(isValid) {
-            userRepository.save(request.getUser());
-        }
-        return isValid ? new ResponseEntity<>(request.getUser(), HttpStatus.CREATED) :
-                new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(service.createNewUser(request.getUser()), HttpStatus.CREATED);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
-        if (!userRepository.getAllUsers().isEmpty()) {
-            return new ResponseEntity<>(userRepository.getAllUsers(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
+            return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userRepository.findById(id).isPresent() ?
-                new ResponseEntity<>(userRepository.findById(id).get(), HttpStatus.OK) :
-                new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(service.getUserById(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/users/{id}")
     public HttpStatus deleteUserById(@PathVariable Long id) {
-            boolean isPresent = userRepository.existsById(id);
-            if(isPresent) {
-                userRepository.deleteById(id);
-            } else {
-                return HttpStatus.NOT_FOUND;
-            }
+            service.delete(id);
             return HttpStatus.OK;
     }
 
