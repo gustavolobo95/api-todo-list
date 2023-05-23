@@ -12,8 +12,8 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u")
-    public List<User> findAllUsers();
+    List<User> findAllUsers();
 
-    public User findUserById(Long id);
+    User findUserById(Long id);
 
 }
